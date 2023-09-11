@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+name: Test
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repos
+        uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+      - name: Restore dependencies
+        run: dotnet restore promoted-dotnet-delivery-client.sln
+      - name: Build
+        run: dotnet build promoted-dotnet-delivery-client.sln --no-restore --configuration Release
+      - name: Test
+        run: dotnet test promoted-dotnet-delivery-client.sln --no-build --configuration Release
