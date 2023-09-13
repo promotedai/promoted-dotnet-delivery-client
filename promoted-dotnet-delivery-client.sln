@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{486D56A9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib_tests", "tests\lib_tests\lib_tests.csproj", "{A13D8190-777B-4BA7-9882-A03B4789F2ED}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{D658A92C-CB0E-4210-8CEF-A66424DC21DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "promoted_protos", "submodules\schema\promoted_protos.csproj", "{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +38,15 @@ Global
 		{A13D8190-777B-4BA7-9882-A03B4789F2ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A13D8190-777B-4BA7-9882-A03B4789F2ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A13D8190-777B-4BA7-9882-A03B4789F2ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9EB5D9EA-2410-4A9B-A387-4EBED155146D} = {6ADA4D22-AB0E-411D-8DEB-34FD29F5DCB9}
 		{CF85B47A-2F97-45A0-8FDD-60C4474D9540} = {6ADA4D22-AB0E-411D-8DEB-34FD29F5DCB9}
 		{A13D8190-777B-4BA7-9882-A03B4789F2ED} = {486D56A9-A7A0-4C8C-8B53-31E3F7699C64}
+		{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6} = {D658A92C-CB0E-4210-8CEF-A66424DC21DA}
 	EndGlobalSection
 EndGlobal

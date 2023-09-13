@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\submodules\schema\promoted_protos.csproj" />
+  </ItemGroup>
+
 </Project>
