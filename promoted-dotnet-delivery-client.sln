@@ -5,13 +5,13 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ADA4D22-AB0E-411D-8DEB-34FD29F5DCB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "src\lib\lib.csproj", "{9EB5D9EA-2410-4A9B-A387-4EBED155146D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib", "src\lib\Lib.csproj", "{9EB5D9EA-2410-4A9B-A387-4EBED155146D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "exe", "src\exe\exe.csproj", "{CF85B47A-2F97-45A0-8FDD-60C4474D9540}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "exe", "src\exe\Exe.csproj", "{CF85B47A-2F97-45A0-8FDD-60C4474D9540}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{486D56A9-A7A0-4C8C-8B53-31E3F7699C64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib_tests", "tests\lib_tests\lib_tests.csproj", "{A13D8190-777B-4BA7-9882-A03B4789F2ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib_tests", "tests\lib_tests\LibTests.csproj", "{A13D8190-777B-4BA7-9882-A03B4789F2ED}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{D658A92C-CB0E-4210-8CEF-A66424DC21DA}"
 EndProject
