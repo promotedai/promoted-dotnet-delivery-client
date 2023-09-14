@@ -25,19 +25,19 @@ public class DeliveryClientTests
             {
                 Content = new StringContent(_formatter.Format(_resp), Encoding.UTF8, "application/json")
             })
-            .Callback<string, HttpContent>((_, context) =>
+            .Callback<string, HttpContent>((_, content) =>
             {
                 // We have to save this for later comparison because the original will be disposed of.
-                delivery_req_content = context.ReadAsStringAsync().Result;
+                delivery_req_content = content.ReadAsStringAsync().Result;
             });
         string? metrics_req_content = null;
         var mockMetricsHttpClient = new Mock<IHttpClient>();
         mockMetricsHttpClient
             .Setup(c => c.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>()))
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK))
-            .Callback<string, HttpContent>((_, context) =>
+            .Callback<string, HttpContent>((_, content) =>
             {
-                metrics_req_content = context.ReadAsStringAsync().Result;
+                metrics_req_content = content.ReadAsStringAsync().Result;
             });
 
         string deliveryEndpoint = "abc";
