@@ -1,7 +1,11 @@
-﻿namespace Promoted.Exe
+﻿using NLog;
+
+namespace Promoted.Exe
 {
     class ManualConsumer
     {
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         static string GetEnvironmentVariableOrThrow(string varName)
         {
             string? envVar = Environment.GetEnvironmentVariable(varName);
@@ -14,6 +18,11 @@
 
         static async Task Main(string[] args)
         {
+            NLog.LogManager.Setup().LoadConfiguration(builder =>
+            {
+                builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
+            });
+
             Promoted.Lib.DeliveryClient client;
             try
             {
@@ -29,15 +38,15 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to create client: {ex.Message}");
+                _logger.Error($"Failed to create client: {ex.Message}");
                 return;
             }
 
             // Use the client.
             var req = new Promoted.Delivery.Request();
-            Console.WriteLine($"Request:\t{req}");
+            _logger.Info($"Request:\t{req}");
             Promoted.Delivery.Response resp = await client.Deliver(req);
-            Console.WriteLine($"Response:\t{resp}");
+            _logger.Info($"Response:\t{resp}");
 
             client.Dispose();
         }
