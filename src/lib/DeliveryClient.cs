@@ -89,7 +89,7 @@ namespace Promoted.Lib
                 {
                     if (task.Exception == null)
                     {
-                        _logger.Error($"Metrics request could not be completed (likely timed out)");
+                        _logger.Error("Metrics request could not be completed (likely timed out)");
                     }
                     else
                     {
