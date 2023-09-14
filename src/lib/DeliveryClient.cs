@@ -9,27 +9,57 @@ namespace Promoted.Lib
     public class DeliveryClient : IDisposable
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private static readonly HttpClient _deliveryHttpClient = new HttpClient();
-        private static readonly HttpClient _metricsHttpClient = new HttpClient();
         private static readonly JsonFormatter _formatter = new JsonFormatter(JsonFormatter.Settings.Default);
         private static readonly JsonParser _parser = new JsonParser(JsonParser.Settings.Default);
-        private readonly ConcurrentBag<Task> _pendingTasks = new ConcurrentBag<Task>();
+        private readonly IHttpClient _deliveryHttpClient;
+        private readonly IHttpClient _metricsHttpClient;
         private readonly string _deliveryEndpoint;
         private readonly string _metricsEndpoint;
+        private readonly ConcurrentBag<Task> _pendingTasks = new ConcurrentBag<Task>();
+
+        private class HttpClientWrapper : IHttpClient
+        {
+            private readonly HttpClient _httpClient;
+
+            public HttpClientWrapper(HttpClient httpClient)
+            {
+                _httpClient = httpClient;
+            }
+
+            public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content)
+            {
+                return _httpClient.PostAsync(requestUri, content);
+            }
+        }
 
         public DeliveryClient(string deliveryEndpoint, string deliveryApiKey, int deliveryTimeoutMillis,
                               string metricsEndpoint, string metricsApiKey, int metricsTimeoutMillis)
         {
+            HttpClient deliveryHttpClient = new HttpClient();
+            deliveryHttpClient.DefaultRequestHeaders.Add("x-api-key", deliveryApiKey);
+            deliveryHttpClient.Timeout = TimeSpan.FromMilliseconds(deliveryTimeoutMillis);
+            _deliveryHttpClient = new HttpClientWrapper(deliveryHttpClient);
             this._deliveryEndpoint = deliveryEndpoint;
-            _deliveryHttpClient.DefaultRequestHeaders.Add("x-api-key", deliveryApiKey);
-            _deliveryHttpClient.Timeout = TimeSpan.FromMilliseconds(deliveryTimeoutMillis);
+
+            HttpClient metricsHttpClient = new HttpClient();
+            metricsHttpClient.DefaultRequestHeaders.Add("x-api-key", metricsApiKey);
+            metricsHttpClient.Timeout = TimeSpan.FromMilliseconds(metricsTimeoutMillis);
+            _metricsHttpClient = new HttpClientWrapper(metricsHttpClient);
             this._metricsEndpoint = metricsEndpoint;
-            _metricsHttpClient.DefaultRequestHeaders.Add("x-api-key", metricsApiKey);
-            _metricsHttpClient.Timeout = TimeSpan.FromMilliseconds(metricsTimeoutMillis);
 
             _logger.Info("Constructed delivery client:");
             _logger.Info($"- Delivery endpoint = {deliveryEndpoint}");
             _logger.Info($"- Metrics endpoint = {metricsEndpoint}");
+        }
+
+        // Intended for test. Prefer the above constructor for the default HttpClient impl.
+        public DeliveryClient(IHttpClient deliveryHttpClient, string deliveryEndpoint,
+                              IHttpClient metricsHttpClient, string metricsEndpoint)
+        {
+            _deliveryHttpClient = deliveryHttpClient;
+            this._deliveryEndpoint = deliveryEndpoint;
+            _metricsHttpClient = metricsHttpClient;
+            this._metricsEndpoint = metricsEndpoint;
         }
 
         public void Dispose()
