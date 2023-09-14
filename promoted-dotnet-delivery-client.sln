@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lib_tests", "tests\lib_test
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{D658A92C-CB0E-4210-8CEF-A66424DC21DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "promoted_protos", "submodules\schema\promoted_protos.csproj", "{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "promoted_protos", "submodules\schema\PromotedProtos.csproj", "{97BBEF38-A57B-42C8-B368-48D5A2EA9EA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
