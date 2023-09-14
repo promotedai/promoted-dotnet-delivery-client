@@ -5,9 +5,10 @@
         static async Task Main(string[] args)
         {
             // Create the client.
-            string url = "http://localhost:9090/deliver";
-            string apiKey = "abc";
-            var client = new Promoted.Lib.DeliveryClient(url, apiKey);
+            string deliveryEndpoint = "http://localhost:9090/deliver";
+            string deliveryApiKey = "abc";
+            int deliveryTimeoutMillis = 100;
+            var client = new Promoted.Lib.DeliveryClient(deliveryEndpoint, deliveryApiKey, deliveryTimeoutMillis);
 
             // Use the client.
             var req = new Promoted.Delivery.Request();

@@ -8,12 +8,13 @@ namespace Promoted.Lib
         private static readonly HttpClient httpClient = new HttpClient();
         private static readonly JsonFormatter formatter = new JsonFormatter(JsonFormatter.Settings.Default);
         private static readonly JsonParser parser = new JsonParser(JsonParser.Settings.Default);
-        private readonly string url;
+        private readonly string deliveryEndpoint;
 
-        public DeliveryClient(string url, string apiKey)
+        public DeliveryClient(string deliveryEndpoint, string deliveryApiKey, int deliveryTimeoutMillis)
         {
-            this.url = url;
-            httpClient.DefaultRequestHeaders.Add("x-api-key", apiKey);
+            this.deliveryEndpoint = deliveryEndpoint;
+            httpClient.DefaultRequestHeaders.Add("x-api-key", deliveryApiKey);
+            httpClient.Timeout = TimeSpan.FromMilliseconds(deliveryTimeoutMillis);
         }
 
         public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req)
@@ -24,13 +25,19 @@ namespace Promoted.Lib
                 string json = formatter.Format(req);
 
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await httpClient.PostAsync(url, content);
+                HttpResponseMessage response = await httpClient.PostAsync(deliveryEndpoint, content);
                 // This throws if the request was unsuccessful.
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
 
                 // JSON -> Protobuf
                 return (Promoted.Delivery.Response)parser.Parse(responseBody, Promoted.Delivery.Response.Descriptor);
+            }
+            catch (TaskCanceledException ex)
+            {
+                // TODO(james): Proper timeout behavior.
+                Console.WriteLine($"Request timed out: {ex.Message}");
+                return null;
             }
             catch (Exception ex)
             {
