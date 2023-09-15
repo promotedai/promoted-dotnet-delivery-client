@@ -16,6 +16,7 @@ namespace Promoted.Lib
         private readonly string _deliveryEndpoint;
         private readonly string _metricsEndpoint;
         private readonly ConcurrentBag<Task> _pendingTasks = new ConcurrentBag<Task>();
+        private readonly DeliveryClientOptions _options = new DeliveryClientOptions();
 
         private class HttpClientWrapper : IHttpClient
         {
@@ -33,7 +34,8 @@ namespace Promoted.Lib
         }
 
         public DeliveryClient(string deliveryEndpoint, string deliveryApiKey, int deliveryTimeoutMillis,
-                              string metricsEndpoint, string metricsApiKey, int metricsTimeoutMillis)
+                              string metricsEndpoint, string metricsApiKey, int metricsTimeoutMillis,
+                              DeliveryClientOptions? options = null)
         {
             HttpClient deliveryHttpClient = new HttpClient();
             deliveryHttpClient.DefaultRequestHeaders.Add("x-api-key", deliveryApiKey);
@@ -47,6 +49,11 @@ namespace Promoted.Lib
             _metricsHttpClient = new HttpClientWrapper(metricsHttpClient);
             this._metricsEndpoint = metricsEndpoint;
 
+            if (options != null)
+            {
+                _options = options;
+            }
+
             _logger.Info("Constructed delivery client:");
             _logger.Info($"- Delivery endpoint = {deliveryEndpoint}");
             _logger.Info($"- Metrics endpoint = {metricsEndpoint}");
@@ -54,12 +61,18 @@ namespace Promoted.Lib
 
         // Intended for test. Prefer the above constructor for the default HttpClient impl.
         public DeliveryClient(IHttpClient deliveryHttpClient, string deliveryEndpoint,
-                              IHttpClient metricsHttpClient, string metricsEndpoint)
+                              IHttpClient metricsHttpClient, string metricsEndpoint,
+                              DeliveryClientOptions? options = null)
         {
             _deliveryHttpClient = deliveryHttpClient;
             this._deliveryEndpoint = deliveryEndpoint;
             _metricsHttpClient = metricsHttpClient;
             this._metricsEndpoint = metricsEndpoint;
+
+            if (options != null)
+            {
+                _options = options;
+            }
         }
 
         public void Dispose()
@@ -137,8 +150,6 @@ namespace Promoted.Lib
 
         public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req)
         {
-            // TODO(james): Decide if this should be shadow traffic.
-
             // TODO(james): Add optional request validation to help with integration.
 
             // TODO(james): Populate particular request fields.
@@ -152,6 +163,8 @@ namespace Promoted.Lib
             // TODO(james): Only call metrics when SDK delivery was done.
             CallMetrics();
 
+            bool shouldSendShadowTraffic = _options.ShadowTrafficRate > 0 &&
+                                           _options.ShadowTrafficRate < ThreadSafeRandom.NextFloat();
             // TODO(james): Implement shadow traffic.
             // TODO(james): Only send shadow traffic when we earlier decided to.
 
