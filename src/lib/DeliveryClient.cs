@@ -137,8 +137,24 @@ namespace Promoted.Lib
 
         public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req)
         {
+            // TODO(james): Decide if this should be shadow traffic.
+
+            // TODO(james): Add optional request validation to help with integration.
+
+            // TODO(james): Populate particular request fields.
+
+            // TODO(james): Implement SDK delivery.
+
+            // TODO(james): Add logic to determine delivery method.
             string resp = await CallDelivery(req);
+
+            // TODO(james): Actually implement CallMetrics().
+            // TODO(james): Only call metrics when SDK delivery was done.
             CallMetrics();
+
+            // TODO(james): Implement shadow traffic.
+            // TODO(james): Only send shadow traffic when we earlier decided to.
+
             // JSON -> Protobuf.
             return (Promoted.Delivery.Response)_parser.Parse(resp, Promoted.Delivery.Response.Descriptor);
         }
