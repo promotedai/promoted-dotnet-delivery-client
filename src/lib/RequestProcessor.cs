@@ -2,8 +2,6 @@ namespace Promoted.Lib
 {
     public static class RequestProcessor
     {
-        private static DateTimeOffset _epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-
         public static void FillNecessaryFields(Promoted.Delivery.Request req)
         {
             if (req.ClientInfo == null)
@@ -24,8 +22,7 @@ namespace Promoted.Lib
             }
             if (req.Timing.ClientLogTimestamp == 0)
             {
-                // UtcNow by itself returns the time since January 1, 0001.
-                req.Timing.ClientLogTimestamp = (ulong)Math.Round((DateTimeOffset.UtcNow - _epoch).TotalMilliseconds);
+                req.Timing.ClientLogTimestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
         }
     }
