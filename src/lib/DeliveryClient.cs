@@ -152,7 +152,7 @@ namespace Promoted.Lib
         {
             // TODO(james): Add optional request validation to help with integration.
 
-            // TODO(james): Populate particular request fields.
+            RequestProcessor.FillNecessaryFields(req);
 
             // TODO(james): Implement SDK delivery.
 

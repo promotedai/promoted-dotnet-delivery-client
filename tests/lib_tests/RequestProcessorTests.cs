@@ -1,0 +1,23 @@
+namespace lib_tests;
+
+using Promoted.Lib;
+
+public class RequestProcessorTests
+{
+    [Fact]
+    public void FillNecessaryFields()
+    {
+        var req = new Promoted.Delivery.Request();
+        RequestProcessor.FillNecessaryFields(req);
+        Assert.Equal(Promoted.Common.ClientInfo.Types.ClientType.PlatformServer, req.ClientInfo.ClientType);
+        Assert.Equal(Promoted.Common.ClientInfo.Types.TrafficType.Production, req.ClientInfo.TrafficType);
+        Assert.Equal(false, string.IsNullOrWhiteSpace(req.ClientRequestId));
+        Assert.Equal(36, req.ClientRequestId.Length);
+        // Injecting a mockable time seems excessive. Just make sure this test passes for a long time.
+        var epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        Assert.True(req.Timing.ClientLogTimestamp >=
+                    (ulong)(new DateTimeOffset(2023, 1, 1, 0, 0, 0, TimeSpan.Zero) - epoch).TotalMilliseconds);
+        Assert.True(req.Timing.ClientLogTimestamp <=
+                    (ulong)(new DateTimeOffset(2073, 1, 1, 0, 0, 0, TimeSpan.Zero) - epoch).TotalMilliseconds);
+    }
+}
