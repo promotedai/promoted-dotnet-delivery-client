@@ -11,7 +11,7 @@ public class RequestProcessorTests
         RequestProcessor.FillNecessaryFields(req);
         Assert.Equal(Promoted.Common.ClientInfo.Types.ClientType.PlatformServer, req.ClientInfo.ClientType);
         Assert.Equal(Promoted.Common.ClientInfo.Types.TrafficType.Production, req.ClientInfo.TrafficType);
-        Assert.Equal(false, string.IsNullOrWhiteSpace(req.ClientRequestId));
+        Assert.False(string.IsNullOrWhiteSpace(req.ClientRequestId));
         Assert.Equal(36, req.ClientRequestId.Length);
         // Injecting a mockable time seems excessive. Just make sure this test passes for a long time.
         Assert.True(req.Timing.ClientLogTimestamp >=
