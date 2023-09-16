@@ -19,4 +19,12 @@ public class RequestProcessorTests
         Assert.True(req.Timing.ClientLogTimestamp <=
                     (ulong)new DateTimeOffset(2073, 1, 1, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds());
     }
+
+    [Fact]
+    public void ConvertToShadowRequest()
+    {
+        var req = new Promoted.Delivery.Request();
+        RequestProcessor.ConvertToShadowRequest(req);
+        Assert.Equal(Promoted.Common.ClientInfo.Types.TrafficType.Shadow, req.ClientInfo.TrafficType);
+    }
 }

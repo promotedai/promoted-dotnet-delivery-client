@@ -33,8 +33,11 @@ namespace Promoted.Exe
                 string metricsEndpoint = GetEnvironmentVariableOrThrow("METRICS_ENDPOINT");
                 string metricsApiKey = GetEnvironmentVariableOrThrow("METRICS_API_KEY");
                 int metricsTimeoutMillis = int.Parse(GetEnvironmentVariableOrThrow("METRICS_TIMEOUT_MILLIS"));
+                var options = new Promoted.Lib.DeliveryClientOptions();
+                options.ShadowTrafficRate = 1;
                 client = new Promoted.Lib.DeliveryClient(deliveryEndpoint, deliveryApiKey, deliveryTimeoutMillis,
-                                                         metricsEndpoint, metricsApiKey, metricsTimeoutMillis);
+                                                         metricsEndpoint, metricsApiKey, metricsTimeoutMillis,
+                                                         options);
             }
             catch (Exception ex)
             {

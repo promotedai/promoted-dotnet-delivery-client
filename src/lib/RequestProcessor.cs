@@ -4,10 +4,7 @@ namespace Promoted.Lib
     {
         public static void FillNecessaryFields(Promoted.Delivery.Request req)
         {
-            if (req.ClientInfo == null)
-            {
-                req.ClientInfo = new Common.ClientInfo();
-            }
+            req.ClientInfo ??= new Common.ClientInfo();
             req.ClientInfo.ClientType = Common.ClientInfo.Types.ClientType.PlatformServer;
             req.ClientInfo.TrafficType = Common.ClientInfo.Types.TrafficType.Production;
 
@@ -16,14 +13,17 @@ namespace Promoted.Lib
                 req.ClientRequestId = Guid.NewGuid().ToString();
             }
 
-            if (req.Timing == null)
-            {
-                req.Timing = new Common.Timing();
-            }
+            req.Timing ??= new Common.Timing();
             if (req.Timing.ClientLogTimestamp == 0)
             {
                 req.Timing.ClientLogTimestamp = (ulong)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
+        }
+
+        public static void ConvertToShadowRequest(Promoted.Delivery.Request req)
+        {
+            req.ClientInfo ??= new Common.ClientInfo();
+            req.ClientInfo.TrafficType = Common.ClientInfo.Types.TrafficType.Shadow;
         }
     }
 }
