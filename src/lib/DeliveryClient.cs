@@ -152,8 +152,10 @@ namespace Promoted.Lib
             Promoted.Delivery.Response? resp = null;
 
             bool attemptedCallDelivery = false;
-            // TODO(james): Add more logic to determine delivery method.
-            if (options.OnlyLogToMetrics)
+            bool successfulCallDelivery = false;
+            // Don't call delivery service if this request is part of the control group in an experiment
+            // or if we just want to log to metrics.
+            if (RequestProcessor.IsInControl(options.Experiment) || options.OnlyLogToMetrics)
             {
                 // TODO(james): Implement SDK delivery.
                 resp = new Promoted.Delivery.Response();
@@ -167,11 +169,18 @@ namespace Promoted.Lib
                     // TODO(james): Fall back to SDK delivery.
                     resp = new Promoted.Delivery.Response();
                 }
+                else
+                {
+                    successfulCallDelivery = true;
+                }
             }
 
-            // TODO(james): Actually implement CallMetrics().
-            // TODO(james): Only call metrics when SDK delivery was done.
-            CallMetrics();
+            // Log to metrics if SDK delivery was done or if we have experiment info the delivery service doesn't.
+            if (!successfulCallDelivery || options.Experiment != null)
+            {
+                // TODO(james): Actually implement CallMetrics().
+                CallMetrics();
+            }
 
             // Even if we don't use the delivery service for re-ranking, we may still want to send traffic there.
             bool shouldShadowThisRequest = _options.ShadowTrafficRate > 0 &&

@@ -27,4 +27,18 @@ public class RequestProcessorTests
         RequestProcessor.ConvertToShadowRequest(req);
         Assert.Equal(Promoted.Common.ClientInfo.Types.TrafficType.Shadow, req.ClientInfo.TrafficType);
     }
+
+    [Fact]
+    public void IsInControl()
+    {
+        Event.CohortMembership? experiment = null;
+        Assert.False(RequestProcessor.IsInControl(experiment));
+        experiment = new Event.CohortMembership();
+        Assert.False(RequestProcessor.IsInControl(experiment));
+        experiment.Arm = Event.CohortArm.Treatment;
+        Assert.False(RequestProcessor.IsInControl(experiment));
+
+        experiment.Arm = Event.CohortArm.Control;
+        Assert.True(RequestProcessor.IsInControl(experiment));
+    }
 }
