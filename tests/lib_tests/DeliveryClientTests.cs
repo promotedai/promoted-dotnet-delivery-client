@@ -45,7 +45,10 @@ public class DeliveryClientTests
         string metricsEndpoint = "def";
         var client = new DeliveryClient(mockDeliveryHttpClient.Object, deliveryEndpoint,
                                         mockMetricsHttpClient.Object, metricsEndpoint);
-        await client.Deliver(_req);
+        var options = new DeliveryRequestOptions();
+        // Making an experiment to force a metrics call right now. Won't do this once I add more test cases.
+        options.Experiment = new Event.CohortMembership();
+        await client.Deliver(_req, options);
         client.Dispose();
 
         mockDeliveryHttpClient.Verify(

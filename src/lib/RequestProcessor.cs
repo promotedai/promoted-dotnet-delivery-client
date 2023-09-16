@@ -25,5 +25,9 @@ namespace Promoted.Lib
             req.ClientInfo ??= new Common.ClientInfo();
             req.ClientInfo.TrafficType = Common.ClientInfo.Types.TrafficType.Shadow;
         }
+
+        public static bool IsInControl(Event.CohortMembership? experiment) {
+            return experiment?.Arm == Event.CohortArm.Control;
+        }
     }
 }
