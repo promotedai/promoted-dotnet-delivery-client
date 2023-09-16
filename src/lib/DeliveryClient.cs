@@ -140,20 +140,33 @@ namespace Promoted.Lib
                                          task => HandlePostAsyncCompletion(task, content, _metricsLogTag));
         }
 
-        public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req)
+        public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req,
+                                                              DeliveryRequestOptions? options = null)
         {
+            options ??= new DeliveryRequestOptions();
+
             // TODO(james): Add optional request validation to help with integration.
 
             RequestProcessor.FillNecessaryFields(req);
 
-            // TODO(james): Implement SDK delivery.
+            Promoted.Delivery.Response? resp = null;
 
-            // TODO(james): Add logic to determine delivery method.
-            bool attemptedCallDelivery = true;
-            Promoted.Delivery.Response? resp = await CallDelivery(req);
-            if (resp == null) {
-                // TODO(james): Fall back to SDK delivery.
+            bool attemptedCallDelivery = false;
+            // TODO(james): Add more logic to determine delivery method.
+            if (options.OnlyLogToMetrics)
+            {
+                // TODO(james): Implement SDK delivery.
                 resp = new Promoted.Delivery.Response();
+            }
+            else
+            {
+                attemptedCallDelivery = true;
+                resp = await CallDelivery(req);
+                if (resp == null)
+                {
+                    // TODO(james): Fall back to SDK delivery.
+                    resp = new Promoted.Delivery.Response();
+                }
             }
 
             // TODO(james): Actually implement CallMetrics().
