@@ -41,4 +41,24 @@ public class RequestProcessorTests
         experiment.Arm = Event.CohortArm.Control;
         Assert.True(RequestProcessor.IsInControl(experiment));
     }
+
+    [Fact]
+    public void Validate()
+    {
+        // Just test all the leaf problems.
+        var req = new Promoted.Delivery.Request();
+        req.RequestId = "ShouldBeEmpty";
+        req.UserInfo = new Promoted.Common.UserInfo();
+        req.UserInfo.LogUserId = "";
+        var badInsertionA = new Promoted.Delivery.Insertion();
+        badInsertionA.InsertionId = "A";
+        badInsertionA.ContentId = "";
+        req.Insertion.Add(badInsertionA);
+        var badInsertionB = new Promoted.Delivery.Insertion();
+        badInsertionB.InsertionId = "B";
+        badInsertionB.ContentId = "";
+        req.Insertion.Add(badInsertionB);
+        List<string> problems = RequestProcessor.Validate(req);
+        Assert.Equal(6, problems.Count);
+    }
 }

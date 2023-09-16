@@ -145,8 +145,14 @@ namespace Promoted.Lib
         {
             options ??= new DeliveryRequestOptions();
 
-            // TODO(james): Add optional request validation to help with integration.
-
+            if (_options.Validate)
+            {
+                List<string> problems = RequestProcessor.Validate(req);
+                foreach (string problem in problems)
+                {
+                    _logger.Error($"Delivery request validation error: {problem}");
+                }
+            }
             RequestProcessor.FillNecessaryFields(req);
 
             Promoted.Delivery.Response? resp = null;

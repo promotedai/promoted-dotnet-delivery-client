@@ -35,6 +35,7 @@ namespace Promoted.Exe
                 int metricsTimeoutMillis = int.Parse(GetEnvironmentVariableOrThrow("METRICS_TIMEOUT_MILLIS"));
                 var options = new Promoted.Lib.DeliveryClientOptions();
                 options.ShadowTrafficRate = 1;
+                options.Validate = true;
                 client = new Promoted.Lib.DeliveryClient(deliveryEndpoint, deliveryApiKey, deliveryTimeoutMillis,
                                                          metricsEndpoint, metricsApiKey, metricsTimeoutMillis,
                                                          options);
