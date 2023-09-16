@@ -5,25 +5,25 @@ using Promoted.Lib;
 public class DeliveryRequestOptionsTests
 {
     [Fact]
-    public void InsertionStartIndexDefault()
+    public void RetrievalInsertionOffsetDefault()
     {
         var options = new DeliveryRequestOptions();
-        Assert.Equal(0, options.InsertionStartIndex);
+        Assert.Equal(0, options.RetrievalInsertionOffset);
     }
 
     [Fact]
-    public void InsertionStartIndexValid()
+    public void RetrievalInsertionOffsetValid()
     {
         var options = new DeliveryRequestOptions();
         // Will throw and fail the test if not valid.
-        options.InsertionStartIndex = 0;
-        options.InsertionStartIndex = 100;
+        options.RetrievalInsertionOffset = 0;
+        options.RetrievalInsertionOffset = 100;
     }
 
     [Fact]
-    public void InsertionStartIndexInvalid()
+    public void RetrievalInsertionOffsetInvalid()
     {
         var options = new DeliveryRequestOptions();
-        Assert.Throws<ArgumentException>(() => options.InsertionStartIndex = -1);
+        Assert.Throws<ArgumentException>(() => options.RetrievalInsertionOffset = -1);
     }
 }

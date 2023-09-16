@@ -6,18 +6,18 @@ namespace Promoted.Lib
 
         public Event.CohortMembership? Experiment { get; set; } = null;
 
-        private int _insertionStartIndex;
+        private int _retrievalInsertionOffset;
 
-        public int InsertionStartIndex
+        public int RetrievalInsertionOffset
         {
-            get { return _insertionStartIndex; }
+            get { return _retrievalInsertionOffset; }
             set
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("InsertionStartIndex must be greater than or equal to 0.");
+                    throw new ArgumentException("RetrievalInsertionOffset must be greater than or equal to 0.");
                 }
-                _insertionStartIndex = value;
+                _retrievalInsertionOffset = value;
             }
         }
     }
