@@ -66,7 +66,7 @@ namespace Promoted.Lib
             }
         }
 
-        private async Task<string> CallDelivery(Promoted.Delivery.Request req)
+        private async Task<Promoted.Delivery.Response?> CallDelivery(Promoted.Delivery.Request req)
         {
             // Protobuf -> JSON.
             string json = _formatter.Format(req);
@@ -76,17 +76,17 @@ namespace Promoted.Lib
                 using HttpResponseMessage response = await _deliveryHttpClient.PostAsync(_deliveryEndpoint, content);
                 // This throws if the request was unsuccessful.
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                // JSON -> Protobuf.
+                return (Promoted.Delivery.Response)_parser.Parse(await response.Content.ReadAsStringAsync(),
+                                                                 Promoted.Delivery.Response.Descriptor);
             }
             catch (TaskCanceledException ex)
             {
-                // TODO(james): Proper timeout behavior.
                 _logger.Error($"Delivery request timed out: {ex.Message}");
                 return null;
             }
             catch (Exception ex)
             {
-                // TODO(james): Proper fallback behavior.
                 _logger.Error($"Delivery request failed: {ex.Message}");
                 return null;
             }
@@ -150,7 +150,11 @@ namespace Promoted.Lib
 
             // TODO(james): Add logic to determine delivery method.
             bool attemptedCallDelivery = true;
-            string resp = await CallDelivery(req);
+            Promoted.Delivery.Response? resp = await CallDelivery(req);
+            if (resp == null) {
+                // TODO(james): Fall back to SDK delivery.
+                resp = new Promoted.Delivery.Response();
+            }
 
             // TODO(james): Actually implement CallMetrics().
             // TODO(james): Only call metrics when SDK delivery was done.
@@ -167,8 +171,7 @@ namespace Promoted.Lib
                 ShadowDelivery(clone);
             }
 
-            // JSON -> Protobuf.
-            return (Promoted.Delivery.Response)_parser.Parse(resp, Promoted.Delivery.Response.Descriptor);
+            return resp;
         }
     }
 }
