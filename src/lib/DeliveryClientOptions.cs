@@ -11,7 +11,7 @@ namespace Promoted.Lib
             {
                 if (value < 0 || value > 1)
                 {
-                    throw new ArgumentException("shadowTrafficRate must be between 0 and 1, inclusive.");
+                    throw new ArgumentException("ShadowTrafficRate must be between 0 and 1, inclusive.");
                 }
                 _shadowTrafficRate = value;
             }
