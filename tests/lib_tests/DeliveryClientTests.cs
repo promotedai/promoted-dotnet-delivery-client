@@ -18,7 +18,7 @@ public class DeliveryClientTests
     public async Task DeliverSuccess()
     {
         string? delivery_req_content = null;
-        var mockDeliveryHttpClient = new Mock<IHttpClient>();
+        var mockDeliveryHttpClient = new Mock<ICallbackHttpClient>();
         mockDeliveryHttpClient
             .Setup(c => c.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>()))
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
@@ -31,14 +31,15 @@ public class DeliveryClientTests
                 delivery_req_content = content.ReadAsStringAsync().Result;
             });
         string? metrics_req_content = null;
-        var mockMetricsHttpClient = new Mock<IHttpClient>();
+        var mockMetricsHttpClient = new Mock<ICallbackHttpClient>();
         mockMetricsHttpClient
-            .Setup(c => c.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>()))
-            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK))
-            .Callback<string, HttpContent>((_, content) =>
-            {
-                metrics_req_content = content.ReadAsStringAsync().Result;
-            });
+            .Setup(c =>
+            c.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>(), It.IsAny<Action<Task<HttpResponseMessage>>>()))
+                .Callback<string, HttpContent, Action<Task<HttpResponseMessage>>>((_, content, callback) =>
+                {
+                    metrics_req_content = content.ReadAsStringAsync().Result;
+                    callback(Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+                });
 
         string deliveryEndpoint = "abc";
         string metricsEndpoint = "def";
@@ -59,7 +60,8 @@ public class DeliveryClientTests
                              It.Is<HttpContent>(content =>
                                  metrics_req_content == _formatter.Format(_log_req)
                                  && content.Headers.ContentType.CharSet == "utf-8"
-                                 && content.Headers.ContentType.MediaType == "application/json")),
+                                 && content.Headers.ContentType.MediaType == "application/json"),
+                             It.IsAny<Action<Task<HttpResponseMessage>>>()),
             Times.Once);
     }
 }

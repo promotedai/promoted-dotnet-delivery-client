@@ -1,52 +1,28 @@
 ﻿using Google.Protobuf;
 using NLog;
-using System.Collections.Concurrent;
 using System.Text;
 
 namespace Promoted.Lib
 {
-    // Disposable to try and ensure calls to metrics finish.
+    // Disposable because of disposable members.
     public class DeliveryClient : IDisposable
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonFormatter _formatter = new JsonFormatter(JsonFormatter.Settings.Default);
         private static readonly JsonParser _parser = new JsonParser(JsonParser.Settings.Default);
-        private readonly IHttpClient _deliveryHttpClient;
-        private readonly IHttpClient _metricsHttpClient;
+        private readonly ICallbackHttpClient _deliveryHttpClient;
+        private readonly ICallbackHttpClient _metricsHttpClient;
         private readonly string _deliveryEndpoint;
         private readonly string _metricsEndpoint;
-        private readonly ConcurrentBag<Task> _pendingTasks = new ConcurrentBag<Task>();
         private readonly DeliveryClientOptions _options = new DeliveryClientOptions();
-
-        private class HttpClientWrapper : IHttpClient
-        {
-            private readonly HttpClient _httpClient;
-
-            public HttpClientWrapper(HttpClient httpClient)
-            {
-                _httpClient = httpClient;
-            }
-
-            public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent content)
-            {
-                return _httpClient.PostAsync(requestUri, content);
-            }
-        }
 
         public DeliveryClient(string deliveryEndpoint, string deliveryApiKey, int deliveryTimeoutMillis,
                               string metricsEndpoint, string metricsApiKey, int metricsTimeoutMillis,
                               DeliveryClientOptions? options = null)
         {
-            HttpClient deliveryHttpClient = new HttpClient();
-            deliveryHttpClient.DefaultRequestHeaders.Add("x-api-key", deliveryApiKey);
-            deliveryHttpClient.Timeout = TimeSpan.FromMilliseconds(deliveryTimeoutMillis);
-            _deliveryHttpClient = new HttpClientWrapper(deliveryHttpClient);
+            _deliveryHttpClient = new OwningCallbackHttpClient(deliveryApiKey, deliveryTimeoutMillis);
             this._deliveryEndpoint = deliveryEndpoint;
-
-            HttpClient metricsHttpClient = new HttpClient();
-            metricsHttpClient.DefaultRequestHeaders.Add("x-api-key", metricsApiKey);
-            metricsHttpClient.Timeout = TimeSpan.FromMilliseconds(metricsTimeoutMillis);
-            _metricsHttpClient = new HttpClientWrapper(metricsHttpClient);
+            _metricsHttpClient = new OwningCallbackHttpClient(metricsApiKey, metricsTimeoutMillis);
             this._metricsEndpoint = metricsEndpoint;
 
             if (options != null)
@@ -60,8 +36,8 @@ namespace Promoted.Lib
         }
 
         // Intended for test. Prefer the above constructor for the default HttpClient impl.
-        public DeliveryClient(IHttpClient deliveryHttpClient, string deliveryEndpoint,
-                              IHttpClient metricsHttpClient, string metricsEndpoint,
+        public DeliveryClient(ICallbackHttpClient deliveryHttpClient, string deliveryEndpoint,
+                              ICallbackHttpClient metricsHttpClient, string metricsEndpoint,
                               DeliveryClientOptions? options = null)
         {
             _deliveryHttpClient = deliveryHttpClient;
@@ -78,7 +54,14 @@ namespace Promoted.Lib
         public void Dispose()
         {
             _logger.Info("Waiting for pending tasks to complete...");
-            Task.WhenAll(_pendingTasks).Wait();
+            if (_deliveryHttpClient is OwningCallbackHttpClient concreteDeliveryClient)
+            {
+                concreteDeliveryClient.Dispose();
+            }
+            if (_metricsHttpClient is OwningCallbackHttpClient concreteMetricsClient)
+            {
+                concreteMetricsClient.Dispose();
+            }
         }
 
         private async Task<string> CallDelivery(Promoted.Delivery.Request req)
@@ -113,7 +96,7 @@ namespace Promoted.Lib
             var log_req = new Event.LogRequest();
             string json = _formatter.Format(log_req);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            Task continuation = _metricsHttpClient.PostAsync(_metricsEndpoint, content).ContinueWith(task =>
+            _metricsHttpClient.PostAsync(_metricsEndpoint, content, task =>
             {
                 if (task.Status == TaskStatus.RanToCompletion)
                 {
@@ -139,13 +122,8 @@ namespace Promoted.Lib
                         _logger.Error($"Metrics request could not be completed: {task.Exception}");
                     }
                 }
-                // Remove the completed task from our list of pending tasks.
-                _pendingTasks.TryTake(out _);
-
                 content.Dispose();
             });
-            // Store these to try and ensure they get completed.
-            _pendingTasks.Add(continuation);
         }
 
         public async Task<Promoted.Delivery.Response> Deliver(Promoted.Delivery.Request req)
