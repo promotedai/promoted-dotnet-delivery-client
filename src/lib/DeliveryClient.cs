@@ -156,7 +156,7 @@ namespace Promoted.Lib
             Promoted.Delivery.Response? resp = null;
 
             bool attemptedCallDelivery = false;
-            bool successfulCallDelivery = false;
+            bool didSdkDelivery = true;
             // Don't call delivery service if this request is part of the control group in an experiment
             // or if we just want to log to metrics.
             if (RequestProcessor.IsInControl(options.Experiment) || options.OnlyLogToMetrics)
@@ -173,15 +173,15 @@ namespace Promoted.Lib
                 }
                 else
                 {
-                    successfulCallDelivery = true;
+                    didSdkDelivery = false;
                 }
             }
 
             // Log to metrics if SDK delivery was done or if we have experiment info the delivery service doesn't.
-            if (!successfulCallDelivery || options.Experiment != null)
+            if (didSdkDelivery || options.Experiment != null)
             {
                 Event.LogRequest logReq =
-                    Metrics.MakeLogRequest(req, resp, successfulCallDelivery, options.Experiment);
+                    Metrics.MakeLogRequest(req, resp, didSdkDelivery, options.Experiment);
                 LogToMetrics(logReq);
             }
 

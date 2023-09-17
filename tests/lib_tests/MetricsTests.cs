@@ -13,9 +13,9 @@ public class MetricsTests
         req.ClientInfo = new Promoted.Common.ClientInfo();
         req.Timing = new Promoted.Common.Timing();
         var resp = new Promoted.Delivery.Response();
-        bool successfulCallDelivery = true;
+        bool didSdkDelivery = false;
         Event.CohortMembership? experiment = null;
-        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, successfulCallDelivery, experiment);
+        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, didSdkDelivery, experiment);
 
         Assert.Equal((ulong)100, logReq.PlatformId);
         Assert.NotNull(logReq.UserInfo);
@@ -28,9 +28,9 @@ public class MetricsTests
     {
         var req = new Promoted.Delivery.Request();
         var resp = new Promoted.Delivery.Response();
-        bool successfulCallDelivery = false;
+        bool didSdkDelivery = true;
         Event.CohortMembership? experiment = null;
-        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, successfulCallDelivery, experiment);
+        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, didSdkDelivery, experiment);
 
         Assert.Equal(1, logReq.DeliveryLog.Count);
         Promoted.Delivery.DeliveryLog deliveryLog = logReq.DeliveryLog[0];
@@ -46,9 +46,9 @@ public class MetricsTests
     {
         var req = new Promoted.Delivery.Request();
         var resp = new Promoted.Delivery.Response();
-        bool successfulCallDelivery = true;
+        bool didSdkDelivery = false;
         var experiment = new Event.CohortMembership();
-        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, successfulCallDelivery, experiment);
+        Event.LogRequest logReq = Metrics.MakeLogRequest(req, resp, didSdkDelivery, experiment);
 
         Assert.Equal(1, logReq.CohortMembership.Count);
     }

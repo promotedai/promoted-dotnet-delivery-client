@@ -6,7 +6,7 @@ namespace Promoted.Lib
     {
         // TODO(james): Fix the event C# namespace in schema.
         public static Event.LogRequest MakeLogRequest(Promoted.Delivery.Request req, Promoted.Delivery.Response resp,
-                                                      bool successfulCallDelivery, Event.CohortMembership? experiment)
+                                                      bool didSdkDelivery, Event.CohortMembership? experiment)
         {
             var logReq = new Event.LogRequest();
 
@@ -15,9 +15,8 @@ namespace Promoted.Lib
             logReq.ClientInfo = req.ClientInfo;
             logReq.Timing = req.Timing;
 
-            // If the call to delivery service wasn't successful, then we did SDK delivery and we need to add a
-            // delivery log.
-            if (!successfulCallDelivery)
+            // If we did SDK delivery then we need to add a delivery log.
+            if (didSdkDelivery)
             {
                 var deliveryLog = new Delivery.DeliveryLog();
                 deliveryLog.Request = req;
