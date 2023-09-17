@@ -130,11 +130,9 @@ namespace Promoted.Lib
                                           task => HandlePostAsyncCompletion(task, content, _shadowDeliveryLogTag));
         }
 
-        private void CallMetrics()
+        private void LogToMetrics(Event.LogRequest logReq)
         {
-            // TODO(james): Fix the event C# namespace in schema.
-            var log_req = new Event.LogRequest();
-            string json = _formatter.Format(log_req);
+            string json = _formatter.Format(logReq);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             _metricsHttpClient.PostAsync(_metricsEndpoint, content,
                                          task => HandlePostAsyncCompletion(task, content, _metricsLogTag));
@@ -158,7 +156,7 @@ namespace Promoted.Lib
             Promoted.Delivery.Response? resp = null;
 
             bool attemptedCallDelivery = false;
-            bool successfulCallDelivery = false;
+            bool didSdkDelivery = true;
             // Don't call delivery service if this request is part of the control group in an experiment
             // or if we just want to log to metrics.
             if (RequestProcessor.IsInControl(options.Experiment) || options.OnlyLogToMetrics)
@@ -175,15 +173,16 @@ namespace Promoted.Lib
                 }
                 else
                 {
-                    successfulCallDelivery = true;
+                    didSdkDelivery = false;
                 }
             }
 
             // Log to metrics if SDK delivery was done or if we have experiment info the delivery service doesn't.
-            if (!successfulCallDelivery || options.Experiment != null)
+            if (didSdkDelivery || options.Experiment != null)
             {
-                // TODO(james): Actually implement CallMetrics().
-                CallMetrics();
+                Event.LogRequest logReq =
+                    Metrics.MakeLogRequest(req, resp, didSdkDelivery, options.Experiment);
+                LogToMetrics(logReq);
             }
 
             // Even if we don't use the delivery service for re-ranking, we may still want to send traffic there.
