@@ -44,12 +44,8 @@ namespace Promoted.Lib
             {
                 problems.Add("Request.userInfo should be set");
             }
-            else if (string.IsNullOrWhiteSpace(req.UserInfo.LogUserId))
-            {
-                problems.Add("Request.userInfo.logUserId should be set");
-            }
 
-            if (req.Insertion == null || req.Insertion.Count == 0)
+            if (req.Insertion == null)
             {
                 problems.Add("Request.insertion should be set");
             }

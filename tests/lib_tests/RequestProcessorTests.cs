@@ -59,6 +59,6 @@ public class RequestProcessorTests
         badInsertionB.ContentId = "";
         req.Insertion.Add(badInsertionB);
         List<string> problems = RequestProcessor.Validate(req);
-        Assert.Equal(6, problems.Count);
+        Assert.Equal(5, problems.Count);
     }
 }
