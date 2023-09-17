@@ -163,8 +163,7 @@ namespace Promoted.Lib
             // or if we just want to log to metrics.
             if (RequestProcessor.IsInControl(options.Experiment) || options.OnlyLogToMetrics)
             {
-                // TODO(james): Implement SDK delivery.
-                resp = new Promoted.Delivery.Response();
+                resp = SdkDelivery.Deliver(req, options);
             }
             else
             {
@@ -172,8 +171,7 @@ namespace Promoted.Lib
                 resp = await CallDelivery(req);
                 if (resp == null)
                 {
-                    // TODO(james): Fall back to SDK delivery.
-                    resp = new Promoted.Delivery.Response();
+                    resp = SdkDelivery.Deliver(req, options);
                 }
                 else
                 {
