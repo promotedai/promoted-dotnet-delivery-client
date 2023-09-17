@@ -16,5 +16,7 @@ namespace Promoted.Lib
                 _shadowTrafficRate = value;
             }
         }
+
+        public bool Validate { get; set; }
     }
 }
