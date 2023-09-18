@@ -4,11 +4,11 @@ namespace Promoted.Lib
 {
     public static class Metrics
     {
-        // TODO(james): Fix the event C# namespace in schema.
-        public static Event.LogRequest MakeLogRequest(Promoted.Delivery.Request req, Promoted.Delivery.Response resp,
-                                                      bool didSdkDelivery, Event.CohortMembership? experiment)
+        public static Promoted.Event.LogRequest MakeLogRequest(
+            Promoted.Delivery.Request req, Promoted.Delivery.Response resp,
+            bool didSdkDelivery, Promoted.Event.CohortMembership? experiment)
         {
-            var logReq = new Event.LogRequest();
+            var logReq = new Promoted.Event.LogRequest();
 
             logReq.PlatformId = req.PlatformId;
             logReq.UserInfo = req.UserInfo;

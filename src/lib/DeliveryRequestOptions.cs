@@ -4,7 +4,7 @@ namespace Promoted.Lib
     {
         public bool OnlyLogToMetrics { get; set; }
 
-        public Event.CohortMembership? Experiment { get; set; } = null;
+        public Promoted.Event.CohortMembership? Experiment { get; set; } = null;
 
         private int _retrievalInsertionOffset;
 

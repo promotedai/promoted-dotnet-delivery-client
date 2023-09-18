@@ -2,7 +2,6 @@
 // 1. Take ownership of callback continuations
 // 2. Ensure that they do finish
 
-using NLog;
 using System.Collections.Concurrent;
 
 namespace Promoted.Lib

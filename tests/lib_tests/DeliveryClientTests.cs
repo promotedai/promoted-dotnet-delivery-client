@@ -56,8 +56,8 @@ public class DeliveryClientTests
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
                                         _mockMetricsHttpClient.Object, _metricsEndpoint);
         var options = new DeliveryRequestOptions();
-        options.Experiment = new Event.CohortMembership();
-        options.Experiment.Arm = Event.CohortArm.Control;
+        options.Experiment = new Promoted.Event.CohortMembership();
+        options.Experiment.Arm = Promoted.Event.CohortArm.Control;
         await client.Deliver(_req, options);
         client.Dispose();
 
