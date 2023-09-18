@@ -109,8 +109,8 @@ Note that `await client.Deliver(req)` can throw here.
 Basic information about the request user.
 Field Name | Type | Optional? | Description
 ---------- | ---- | --------- | -----------
-`UserId` | string | Yes | The platform user id, cleared from Promoted logs.
-`LogUserDd` | string | Yes | A different user id (presumably a UUID) disconnected from the platform user id (e.g. an "anonymous user id"), good for working with unauthenticated users or implementing right-to-be-forgotten.
+`UserId` | string | Yes | The authenticated user id. This is not a saved directly in long term logs. This gets pseudo anonymized.
+`AnonUserId` | string | Yes | A different user id (presumably a UUID) disconnected from the authenticated user id (e.g. an "anonymous user id"), good for working with unauthenticated users or implementing right-to-be-forgotten.
 `IsInternalUser` | bool | Yes | If this user is a test user or not, defaults to false.
 
 ### CohortMembership
@@ -263,7 +263,7 @@ Examples
 
 `RetrievalInsertionOffset` is required to be less than `Paging.Offset` or else a `ValueArgumentExceptionError` will result.
 
-Additional details: https://docs.promoted.ai/docs/ranking-requests#sending-even-more-request-insertions
+Additional details: https://docs.promoted.ai/docs/ranking-requests#how-to-send-more-insertions-than-the-top-few-hundred
 
 ### Position
 
@@ -272,32 +272,3 @@ Additional details: https://docs.promoted.ai/docs/ranking-requests#sending-even-
 ## Logging only
 
 You can use `Deliver()` but enable the `OnlyLogToMetrics` option.
-
-### Experiments
-
-TODO(james)
-
-## SDK Development
-
-### Prereqs
-
-- Recent-ish version of .NET
-
-### Development
-
-A [skeleton executable](https://github.com/promotedai/promoted-dotnet-delivery-client/blob/main/src/exe/ManualConsumer.cs) which uses the client can be modified and then run from the repo root with:
-```
-dotnet run --project src/exe/
-```
-
-
-### Testing
-
-Unit tests can be run with:
-```
-dotnet test
-```
-
-### Release
-
-TODO(james)
