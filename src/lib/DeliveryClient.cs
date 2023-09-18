@@ -130,7 +130,7 @@ namespace Promoted.Lib
                                           task => HandlePostAsyncCompletion(task, content, _shadowDeliveryLogTag));
         }
 
-        private void LogToMetrics(Event.LogRequest logReq)
+        private void LogToMetrics(Promoted.Event.LogRequest logReq)
         {
             string json = _formatter.Format(logReq);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -180,7 +180,7 @@ namespace Promoted.Lib
             // Log to metrics if SDK delivery was done or if we have experiment info the delivery service doesn't.
             if (didSdkDelivery || options.Experiment != null)
             {
-                Event.LogRequest logReq =
+                Promoted.Event.LogRequest logReq =
                     Metrics.MakeLogRequest(req, resp, didSdkDelivery, options.Experiment);
                 LogToMetrics(logReq);
             }

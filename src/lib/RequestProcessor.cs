@@ -26,9 +26,9 @@ namespace Promoted.Lib
             req.ClientInfo.TrafficType = Common.ClientInfo.Types.TrafficType.Shadow;
         }
 
-        public static bool IsInControl(Event.CohortMembership? experiment)
+        public static bool IsInControl(Promoted.Event.CohortMembership? experiment)
         {
-            return experiment?.Arm == Event.CohortArm.Control;
+            return experiment?.Arm == Promoted.Event.CohortArm.Control;
         }
 
         public static List<string> Validate(Promoted.Delivery.Request req)
