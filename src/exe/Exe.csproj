@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\lib\Lib.csproj" />
+    <PackageReference Include="Promoted.DeliveryClient" Version="0.0.1" />
   </ItemGroup>
+
+  <!-- For testing unpublished changes -->
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\lib\Lib.csproj" />
+  </ItemGroup> -->
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>

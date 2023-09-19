@@ -5,12 +5,18 @@
     <LangVersion>11.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.0.0</Version>
+    <PackageId>Promoted.DeliveryClient</PackageId>
+    <Version>0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\submodules\schema\PromotedProtos.csproj" />
+    <PackageReference Include="Promoted.Protos" Version="0.0.0" />
   </ItemGroup>
+
+  <!-- For testing unpublished changes -->
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\..\submodules\schema\PromotedProtos.csproj" />
+  </ItemGroup> -->
 
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.2.4" />
