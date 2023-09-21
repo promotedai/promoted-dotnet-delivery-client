@@ -11,11 +11,12 @@
 The `Promoted.Lib.DeliveryClient` is currently intended to have one instance per pair (Delivery and Metrics) of endpoints. It is thread-safe, but is built on top of `System.Net.Http.HttpClient` so it implements `IDisposable`.
 
 ```c#
+var logger = new Your.Namespace.LogAdapter();
 var options = new Promoted.Lib.DeliveryClientOptions(); // Optional.
 var client = new Promoted.Lib.DeliveryClient(
     deliveryEndpoint, deliveryApiKey, deliveryTimeoutMillis,
     metricsEndpoint, metricsApiKey, metricsTimeoutMillis,
-    options);
+    logger, options);
 ...
 client.Dispose();
 ```
@@ -30,7 +31,17 @@ client.Dispose();
 | `metricsEndpoint`             | string                            | API endpoint for Promoted.ai's Metrics API.                                                                                                                                                                                                                                                                  |
 | `metricsApiKey`              | string                            | API key used in the `x-api-key` header for Promoted.ai's Metrics API.                                                                                                                                                                                                                                        |
 | `metricsTimeoutMillis`       | int                            | Timeout on the Metrics API call.                                                                                                                                                                                                                                                         |
+| `logger` | Promoted.Lib.ILog          | This is an interface. You are responsible for implementing this interface. More details below.                                                        |
 | `options` | Promoted.Lib.DeliveryClientOptions?          | Optional. Specifies additional options, which are described below.                                                                                                                                  |
+
+### ILog interface
+
+The methods which must be implemented for this interface are:
+
+```c#
+void Info(string message);
+void Error(string message);
+```
 
 ### DeliveryClientOptions Properties
 
