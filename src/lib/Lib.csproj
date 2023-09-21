@@ -18,8 +18,4 @@
     <ProjectReference Include="..\..\submodules\schema\PromotedProtos.csproj" />
   </ItemGroup> -->
 
-  <ItemGroup>
-    <PackageReference Include="NLog" Version="5.2.4" />
-  </ItemGroup>
-
 </Project>
