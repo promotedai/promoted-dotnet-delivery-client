@@ -2,30 +2,21 @@ namespace lib_tests;
 
 using Google.Protobuf;
 using Moq;
-using NLog;
 using Promoted.Lib;
 using System.Net;
 using System.Text;
 
 public class DeliveryClientTests
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private static readonly JsonFormatter _formatter = new JsonFormatter(JsonFormatter.Settings.Default);
     private static readonly JsonParser _parser = new JsonParser(JsonParser.Settings.Default);
     private Promoted.Delivery.Request _req = new Promoted.Delivery.Request();
     private Promoted.Delivery.Response _resp = new Promoted.Delivery.Response();
+    private Mock<ILog> _logger = new Mock<ILog>();
     private Mock<ICallbackHttpClient> _mockDeliveryHttpClient = new Mock<ICallbackHttpClient>();
     private Mock<ICallbackHttpClient> _mockMetricsHttpClient = new Mock<ICallbackHttpClient>();
     private string _deliveryEndpoint = "abc";
     private string _metricsEndpoint = "def";
-
-    public DeliveryClientTests()
-    {
-        NLog.LogManager.Setup().LoadConfiguration(builder =>
-        {
-            builder.ForLogger().FilterMinLevel(LogLevel.Info).WriteToConsole();
-        });
-    }
 
     [Fact]
     public async Task NecessaryFieldsGetFilled()
@@ -40,7 +31,8 @@ public class DeliveryClientTests
             });
 
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object);
         await client.Deliver(_req);
         client.Dispose();
 
@@ -54,7 +46,8 @@ public class DeliveryClientTests
     public async Task Control()
     {
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object);
         var options = new DeliveryRequestOptions();
         options.Experiment = new Promoted.Event.CohortMembership();
         options.Experiment.Arm = Promoted.Event.CohortArm.Control;
@@ -75,7 +68,8 @@ public class DeliveryClientTests
     public async Task OnlyLogToMetrics()
     {
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object);
         var options = new DeliveryRequestOptions();
         options.OnlyLogToMetrics = true;
         await client.Deliver(_req, options);
@@ -95,7 +89,8 @@ public class DeliveryClientTests
     public async Task CallDeliveryFailure()
     {
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object);
         await client.Deliver(_req);
         client.Dispose();
 
@@ -121,7 +116,8 @@ public class DeliveryClientTests
             });
 
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object);
         await client.Deliver(_req);
         client.Dispose();
 
@@ -140,7 +136,8 @@ public class DeliveryClientTests
         var clientOptions = new DeliveryClientOptions();
         clientOptions.ShadowTrafficRate = 1;
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint, clientOptions);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object, clientOptions);
         var requestOptions = new DeliveryRequestOptions();
         // Just do this to dodge delivery service.
         requestOptions.OnlyLogToMetrics = true;
@@ -163,7 +160,8 @@ public class DeliveryClientTests
         var clientOptions = new DeliveryClientOptions();
         clientOptions.ShadowTrafficRate = 1;
         var client = new DeliveryClient(_mockDeliveryHttpClient.Object, _deliveryEndpoint,
-                                        _mockMetricsHttpClient.Object, _metricsEndpoint, clientOptions);
+                                        _mockMetricsHttpClient.Object, _metricsEndpoint,
+                                        _logger.Object, clientOptions);
         await client.Deliver(_req);
         client.Dispose();
 

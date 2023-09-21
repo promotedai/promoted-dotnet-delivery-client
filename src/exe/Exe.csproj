@@ -1,13 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="Promoted.DeliveryClient" Version="0.0.1" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <!-- For testing unpublished changes -->
-  <!-- <ItemGroup>
+  <!-- TODO(james): Flip this back in the next PR. -->
+  <ItemGroup>
     <ProjectReference Include="..\lib\Lib.csproj" />
-  </ItemGroup> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.2.4" />
+  </ItemGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>

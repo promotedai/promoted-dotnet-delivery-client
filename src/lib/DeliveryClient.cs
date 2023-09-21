@@ -1,5 +1,4 @@
 ﻿using Google.Protobuf;
-using NLog;
 using System.Text;
 
 namespace Promoted.Lib
@@ -7,11 +6,11 @@ namespace Promoted.Lib
     // Disposable because of disposable members.
     public class DeliveryClient : IDisposable
     {
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private static readonly JsonFormatter _formatter = new JsonFormatter(JsonFormatter.Settings.Default);
         private static readonly JsonParser _parser = new JsonParser(JsonParser.Settings.Default);
         private static readonly string _shadowDeliveryLogTag = "Shadow Delivery";
         private static readonly string _metricsLogTag = "Metrics";
+        private readonly ILog _logger;
         private readonly ICallbackHttpClient _deliveryHttpClient;
         private readonly ICallbackHttpClient _metricsHttpClient;
         private readonly string _deliveryEndpoint;
@@ -20,7 +19,7 @@ namespace Promoted.Lib
 
         public DeliveryClient(string deliveryEndpoint, string deliveryApiKey, int deliveryTimeoutMillis,
                               string metricsEndpoint, string metricsApiKey, int metricsTimeoutMillis,
-                              DeliveryClientOptions? options = null)
+                              ILog logger, DeliveryClientOptions? options = null)
         {
             _deliveryHttpClient = new OwningCallbackHttpClient(deliveryApiKey, deliveryTimeoutMillis);
             this._deliveryEndpoint = deliveryEndpoint;
@@ -32,6 +31,7 @@ namespace Promoted.Lib
                 _options = options;
             }
 
+            _logger = logger;
             _logger.Info("Constructed delivery client:");
             _logger.Info($"- Delivery endpoint = {deliveryEndpoint}");
             _logger.Info($"- Metrics endpoint = {metricsEndpoint}");
@@ -40,7 +40,7 @@ namespace Promoted.Lib
         // Intended for test. Prefer the above constructor for the default HttpClient impl.
         public DeliveryClient(ICallbackHttpClient deliveryHttpClient, string deliveryEndpoint,
                               ICallbackHttpClient metricsHttpClient, string metricsEndpoint,
-                              DeliveryClientOptions? options = null)
+                              ILog logger, DeliveryClientOptions? options = null)
         {
             _deliveryHttpClient = deliveryHttpClient;
             this._deliveryEndpoint = deliveryEndpoint;
@@ -51,6 +51,8 @@ namespace Promoted.Lib
             {
                 _options = options;
             }
+
+            _logger = logger;
         }
 
         public void Dispose()

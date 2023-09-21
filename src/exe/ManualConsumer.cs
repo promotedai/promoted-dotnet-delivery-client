@@ -38,7 +38,7 @@ namespace Promoted.Exe
                 options.Validate = true;
                 client = new Promoted.Lib.DeliveryClient(deliveryEndpoint, deliveryApiKey, deliveryTimeoutMillis,
                                                          metricsEndpoint, metricsApiKey, metricsTimeoutMillis,
-                                                         options);
+                                                         new NLogAdapter(), options);
             }
             catch (Exception ex)
             {
