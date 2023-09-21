@@ -13,3 +13,5 @@ Depending on if you changed the `schema` repo, you may need to do the following 
 1. `cd src/lib`
 1. `dotnet pack --configuration Release`
 1. `dotnet nuget push [path to the .nupkg] --api-key [whatever you generated before] --source https://api.nuget.org/v3/index.json`
+1. Make a PR for the .csproj change
+1. If the `README` was updated, copy the new version to NuGet
