@@ -6,11 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Promoted.DeliveryClient</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Promoted.Protos" Version="0.0.0" />
+    <PackageReference Include="Promoted.Protos" Version="0.1.0" />
   </ItemGroup>
 
   <!-- For testing unpublished changes -->

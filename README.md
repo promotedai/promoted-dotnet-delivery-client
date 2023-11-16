@@ -260,6 +260,7 @@ A request for content insertions.
 `Properties` | Promoted.Common.Properties | Yes | Any additional custom properties to associate.
 `Paging` | Promoted.Common.Paging | Yes | Paging parameters.
 `Device` | Promoted.Common.Device | Yes | Device information (as available).
+`DisablePersonalization` | bool | Yes | If true, disables personalized inputs to delivery.
 
 
 ### Promoted.Delivery.Response
